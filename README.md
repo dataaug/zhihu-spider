@@ -42,5 +42,4 @@ pip install -r requirements.txt
 
 ## 说明备注
 
-- 项目地址：https://github.com/Duguce/MyGadgets/tree/main/ZhihuSpider
-# zhihu-spider
+- 参考自项目地址：https://github.com/Duguce/MyGadgets/tree/main/ZhihuSpider，仅做少量改动以适配MAC电脑
