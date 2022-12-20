@@ -5,14 +5,14 @@ import random
 from time import sleep
 
 headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'}
-nummber = 19550224
+nummber = 19551349
 try:
     with open('breakpoint.txt', 'r') as f:
         nummber = int(f.read())
 except:
     print('no breakpoint')
 
-num_need = 1000
+num_need = 100000
 num_end = nummber + num_need
 while nummber >= 19550224 and nummber <=  num_end:
     # 随机休息
@@ -29,15 +29,22 @@ while nummber >= 19550224 and nummber <=  num_end:
             continue
         else:
             title = re.findall('<title data-rh="true">(.*)</title>', response.text)[0]
-            num_answer = re.findall('<span>(.*)<!-- --> 个回答</span>', response.text)[0]
+    
             print('title:', title)
-            print('num_answer:', num_answer)
             if title == "安全验证 - 知乎":
                 print('question id:', nummber, ';触发安全验证，请降低速度')
                 with open('breakpoint.txt', 'a') as f:
                     f.write(str(nummber))
                 break
+            
+            try:
+                num_answer = re.findall('<span>(.*)<!-- --> 个回答</span>', response.text)[0]
+            except Exception as e: # 一般是没有回答的问题
+                # print('question id:', nummber, ';error:', e)
+                # continue
+                num_answer = 0
 
+            print('num_answer:', num_answer)
             with open('zhihu_valid_links.txt', 'a') as f:
                 f.write(url + '|*|' + title +'|*|' + str(num_answer) + '\n')
             # print(response.text)
