@@ -5,15 +5,21 @@ import random
 from time import sleep
 
 headers = {'User-Agent':'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'}
-nummber = 19551349
+nummber = 19551349 # 初次运行时，默认开启知乎第一个问题
+
 try:
-    with open('breakpoint.txt', 'r') as f:
-        nummber = int(f.read())
-except:
-    print('no breakpoint')
+    with open('zhihu_valid_links.txt', 'r') as f:
+        data = f.readlines()[-1]
+        # print(data)
+        zhihu_link = data.split('|*|')[0]
+        # print(zhihu_link.split('/'))
+        nummber = int(zhihu_link.split('/')[-1].strip())
+except Exception as e:
+    print('no breakpoint:', e)
 
 num_need = 100000
 num_end = nummber + num_need
+print(f'from {nummber} to {num_end}')
 while nummber >= 19550224 and nummber <=  num_end:
     # 随机休息
     time_sleep = random.uniform(1, 4)
@@ -21,7 +27,18 @@ while nummber >= 19550224 and nummber <=  num_end:
 
     nummber = nummber + 1
     url = 'https://www.zhihu.com/question/' + str(nummber)
-    response = requests.get(url, headers=headers)
+
+    try: # 网络错误情况处理
+        response = requests.get(url, headers=headers)
+    except Exception as e:
+        print('**')
+        time_sleep = random.uniform(300, 600)
+        print('网络错误，暂停{time_sleep}s')
+        sleep(time_sleep)
+        print('question id:', nummber, ';error:', e)
+        nummber -= 1
+        continue
+
     # print(url)
     # print(response.text)
     if response.status_code == 200:
