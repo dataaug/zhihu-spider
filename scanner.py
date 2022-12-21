@@ -33,7 +33,7 @@ while nummber >= 19550224 and nummber <=  num_end:
     except Exception as e:
         print('**')
         time_sleep = random.uniform(300, 600)
-        print('网络错误，暂停{time_sleep}s')
+        print('网络错误，暂停{time_sleep}s：', e)
         sleep(time_sleep)
         print('question id:', nummber, ';error:', e)
         nummber -= 1
@@ -45,7 +45,11 @@ while nummber >= 19550224 and nummber <=  num_end:
         if '你似乎来到了没有知识存在的荒原' in response.text:
             continue
         else:
-            title = re.findall('<title data-rh="true">(.*)</title>', response.text)[0]
+            try:
+                title = re.findall('<title data-rh="true">(.*)</title>', response.text)[0]
+            except Exception as e:
+                print('question id:', nummber, ';extract title error:', e)
+                continue
     
             print('title:', title)
             if title == "安全验证 - 知乎":
