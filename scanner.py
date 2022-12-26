@@ -17,12 +17,12 @@ try:
 except Exception as e:
     print('no breakpoint:', e)
 
-num_need = 100000
+num_need = 1000000
 num_end = nummber + num_need
 print(f'from {nummber} to {num_end}')
 while nummber >= 19550224 and nummber <=  num_end:
     # 随机休息
-    time_sleep = random.uniform(1, 4)
+    time_sleep = random.uniform(1, 2)
     sleep(time_sleep)
 
     nummber = nummber + 1
