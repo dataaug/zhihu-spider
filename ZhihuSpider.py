@@ -7,6 +7,7 @@ Description: 抓取知乎某一问题下的所有回答（回答数量不超过8
 
 import datetime
 import time, json, re
+from time import sleep
 import pandas as pd
 import config
 import random
@@ -23,7 +24,7 @@ def get_html(url):
     # 浏览器最大化
     driver.maximize_window()
     driver.get(url)
-    time.sleep(random.uniform(1, 2))
+    time.sleep(random.uniform(3, 4))
     # 定位登录界面关闭按钮
     close_btn = driver.find_element(By.XPATH, "//button[@class='Button Modal-closeButton Button--plain']")
     # 点击登录界面关闭按钮
@@ -40,7 +41,7 @@ def get_driver(url):
     chrome_options.add_argument('--headless')
     # 谷歌文档提到需要加上这个属性来规避bug
     chrome_options.add_argument('--disable-gpu')
-    # 禁止图片和CSS加载，减小抓取时间
+    # # 禁止图片和CSS加载，减小抓取时间
     prefs = {'profile.default_content_setting_values': { 'images': 2, 'javascript': 2, 
                             'plugins': 2,}}
     chrome_options.add_experimental_option("prefs", prefs)
@@ -127,6 +128,16 @@ def get_answers(answerElementList, url):
 
 
 if __name__ == '__main__':
+
+    # 获取当前已经抓取的所有问题
+    try:
+        df_tmp = pd.read_csv('zhihu_result.csv')
+        question_url_contained = set(df_tmp['question_url'].to_list())
+        
+    except Exception as e:
+        print('no breakpoint:', e)
+        question_url_contained = set()
+
     answerData_all = pd.DataFrame(
         columns=(
             'question_title', 'answer_url', 'question_url', 'author_name', 'fans_count', 'created_time', 'updated_time',
@@ -134,9 +145,15 @@ if __name__ == '__main__':
             'voteup_count', 'content'))
     print('需要抓取的问题数量：', len(config.urls))
     for url in config.urls:
+        print('----------------------------------------')
+        if url in question_url_contained:
+            continue
+        print('url:', url)
+
         # https://www.zhihu.com/question/20000010
         url_num = int(url.split('/')[-1])
         if True:
+            time.sleep(random.uniform(30, 40))
             answerElementList, driver = get_html(url)
             print("[NORMAL] 开始抓取该问题的回答...")
             answerData, question_title = get_answers(answerElementList, url)
@@ -144,13 +161,12 @@ if __name__ == '__main__':
             time.sleep(random.uniform(1, 3))
             question_title = re.sub(r'[\W]', '', question_title)
             filename = str(f"result-{datetime.datetime.now().strftime('%Y-%m-%d')}-{question_title}")
-            answerData.to_csv(f'{config.results_path}/{filename}.csv', encoding='utf-8', index=False)
+            # answerData.to_csv(f'{config.results_path}/{filename}.csv', encoding='utf-8', index=False)
             # 并入总表
             answerData_all = answerData_all.append(pd.DataFrame(answerData), ignore_index=True)
-            if url_num % 100 == 0:
-                answerData.to_csv(f'zhihu_result.csv', encoding='utf-8', index=False)
+            #if url_num % 100 == 0:
+            answerData_all.to_csv(f'zhihu_result.csv', encoding='utf-8', index=False)
             print(f"[NORMAL] 问题：【{question_title}】 的回答已经保存至 {filename}.xlsx...")
-            time.sleep(random.uniform(1, 3))
             driver.close()
             # print(e)
             # print(f"[ERROR] 抓取失败...")
