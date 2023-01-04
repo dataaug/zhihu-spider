@@ -73,7 +73,7 @@ def scroll_to_bottom(driver):
             time.sleep(0.01)
         height = currHeight
         currHeight = driver.execute_script(js)
-        time.sleep(0.2)
+        time.sleep(1.2)
 
 
 def get_answers(answerElementList, url):
@@ -133,26 +133,29 @@ if __name__ == '__main__':
     try:
         df_tmp = pd.read_csv('zhihu_result.csv')
         question_url_contained = set(df_tmp['question_url'].to_list())
+        del df_tmp
         
     except Exception as e:
         print('no breakpoint:', e)
         question_url_contained = set()
+        # 创建表头
+        answerData_init = pd.DataFrame(
+            columns=(
+                'question_title', 'answer_url', 'question_url', 'author_name', 'fans_count', 'created_time', 'updated_time',
+                'comment_count',
+                'voteup_count', 'content'))
+        answerData_init.to_csv(f'zhihu_result.csv', mode='a', encoding='utf-8', index=False, header = True)
 
-    answerData_all = pd.DataFrame(
-        columns=(
-            'question_title', 'answer_url', 'question_url', 'author_name', 'fans_count', 'created_time', 'updated_time',
-            'comment_count',
-            'voteup_count', 'content'))
     print('需要抓取的问题数量：', len(config.urls))
     for url in config.urls:
-        print('----------------------------------------')
         if url in question_url_contained:
             continue
+        print('----------------------------------------')
         print('url:', url)
 
         # https://www.zhihu.com/question/20000010
         url_num = int(url.split('/')[-1])
-        if True:
+        try:
             time.sleep(random.uniform(30, 40))
             answerElementList, driver = get_html(url)
             print("[NORMAL] 开始抓取该问题的回答...")
@@ -163,10 +166,16 @@ if __name__ == '__main__':
             filename = str(f"result-{datetime.datetime.now().strftime('%Y-%m-%d')}-{question_title}")
             # answerData.to_csv(f'{config.results_path}/{filename}.csv', encoding='utf-8', index=False)
             # 并入总表
-            answerData_all = answerData_all.append(pd.DataFrame(answerData), ignore_index=True)
+            # answerData_all = answerData_all.append(pd.DataFrame(answerData), ignore_index=True)
             #if url_num % 100 == 0:
-            answerData_all.to_csv(f'zhihu_result.csv', encoding='utf-8', index=False)
+            # 并入总表
+            answerData.to_csv(f'zhihu_result.csv', mode='a', encoding='utf-8', index=False, header = False)
             print(f"[NORMAL] 问题：【{question_title}】 的回答已经保存至 {filename}.xlsx...")
             driver.close()
             # print(e)
             # print(f"[ERROR] 抓取失败...")
+        except Exception as e:
+            print(e)
+            print(f"[ERROR] 抓取失败...")
+
+            continue
