@@ -70,10 +70,10 @@ def scroll_to_bottom(driver):
         # 将滚动条调整至页面底端
         for i in range(height, currHeight, 100):
             driver.execute_script("window.scrollTo(0, {})".format(i))
-            time.sleep(0.01)
+            time.sleep(0.02)
         height = currHeight
         currHeight = driver.execute_script(js)
-        time.sleep(1.2)
+        time.sleep(3)
 
 
 def get_answers(answerElementList, url):
@@ -156,7 +156,7 @@ if __name__ == '__main__':
         # https://www.zhihu.com/question/20000010
         url_num = int(url.split('/')[-1])
         try:
-            time.sleep(random.uniform(30, 40))
+            time.sleep(random.uniform(60, 120))
             answerElementList, driver = get_html(url)
             print("[NORMAL] 开始抓取该问题的回答...")
             answerData, question_title = get_answers(answerElementList, url)
@@ -175,6 +175,7 @@ if __name__ == '__main__':
             # print(e)
             # print(f"[ERROR] 抓取失败...")
         except Exception as e:
+            time.sleep(random.uniform(300, 400))
             print(e)
             print(f"[ERROR] 抓取失败...")
 
