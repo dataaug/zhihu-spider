@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 ## 使用方法
 - 运行<u>scanner.py</u>获取有效的问题id网址，具体的问题以及回答数方便过滤，写入文件
-- 运行<u>filt_links.py</u>按照一定规律筛选问题，并写入文件
+- 运行<u>filter_links.py</u>按照一定规律筛选问题，并写入文件
 - 下载对应浏览器的驱动并置于[Driver](./Driver)文件夹==> 将需要爬取的问题链接置于<u>config.py</u>中 ==> 运行<u>ZhihuSpider.py</u>
 
 ## 抓取字段
