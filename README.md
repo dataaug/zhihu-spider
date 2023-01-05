@@ -14,6 +14,8 @@
 │  config.py # 爬取链接及存储路径设置
 │  README.md
 │  requirements.txt
+│  scanner.py # 获取有效的问题网址
+|  filter_links.py # 按照一定规则筛选问题
 │  ZhihuSpider.py # 知乎爬虫主程序
 │
 ├─Driver
@@ -33,7 +35,8 @@ pip install -r requirements.txt
 ```
 
 ## 使用方法
-- 运行<u>scanner.py</u>获取有效的问题id网址，具体的问题以及回答数方便过滤
+- 运行<u>scanner.py</u>获取有效的问题id网址，具体的问题以及回答数方便过滤，写入文件
+- 运行<u>filt_links.py</u>按照一定规律筛选问题，并写入文件
 - 下载对应浏览器的驱动并置于[Driver](./Driver)文件夹==> 将需要爬取的问题链接置于<u>config.py</u>中 ==> 运行<u>ZhihuSpider.py</u>
 
 ## 抓取字段
@@ -44,4 +47,4 @@ pip install -r requirements.txt
 
 ## 说明备注
 
-- 参考自项目地址：https://github.com/Duguce/MyGadgets/tree/main/ZhihuSpider，仅做少量改动以适配MAC电脑
+- 参考自项目地址：https://github.com/Duguce/MyGadgets/tree/main/ZhihuSpider
