@@ -16,6 +16,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 
+DEBUG = False
 
 def get_html(url):
     driver = get_driver(url)
@@ -24,7 +25,7 @@ def get_html(url):
     # 浏览器最大化
     driver.maximize_window()
     driver.get(url)
-    time.sleep(random.uniform(3, 4))
+    if not DEBUG: time.sleep(random.uniform(3, 4))
     # 定位登录界面关闭按钮
     close_btn = driver.find_element(By.XPATH, "//button[@class='Button Modal-closeButton Button--plain']")
     # 点击登录界面关闭按钮
@@ -42,8 +43,9 @@ def get_driver(url):
     # 谷歌文档提到需要加上这个属性来规避bug
     chrome_options.add_argument('--disable-gpu')
     # # 禁止图片和CSS加载，减小抓取时间
-    prefs = {'profile.default_content_setting_values': { 'images': 2, 'javascript': 2, 
-                            'plugins': 2,}}
+    # prefs = {'profile.default_content_setting_values': { 'images': 2, 'javascript': 2, 
+    #                         'plugins': 2,}}
+    prefs = {'profile.default_content_setting_values': { 'images': 2, }}
     chrome_options.add_experimental_option("prefs", prefs)
 
 
@@ -70,10 +72,10 @@ def scroll_to_bottom(driver):
         # 将滚动条调整至页面底端
         for i in range(height, currHeight, 100):
             driver.execute_script("window.scrollTo(0, {})".format(i))
-            time.sleep(0.02)
+            if not DEBUG: time.sleep(0.02)
         height = currHeight
         currHeight = driver.execute_script(js)
-        time.sleep(3)
+        if not DEBUG: time.sleep(3)
 
 
 def get_answers(answerElementList, url):
@@ -107,7 +109,7 @@ def get_answers(answerElementList, url):
         content = ''.join([content.text for content in contents])
         # print(answer)
         # content = ''
-        time.sleep(0.001)
+        if not DEBUG: time.sleep(0.001)
         row = {'question_title': [question_title],
                'author_name': [author_name],
                'question_url': [url],
@@ -122,7 +124,7 @@ def get_answers(answerElementList, url):
         answerData = answerData.append(pd.DataFrame(row), ignore_index=True)
         numAnswer += 1
         print(f"[NORMAL] 问题：【{question_title}】 的第 {numAnswer} 个回答抓取完成...")
-        time.sleep(0.2)
+        if not DEBUG: time.sleep(0.2)
 
     return answerData, question_title
 
@@ -156,12 +158,12 @@ if __name__ == '__main__':
         # https://www.zhihu.com/question/20000010
         url_num = int(url.split('/')[-1])
         try:
-            time.sleep(random.uniform(60, 120))
+            if not DEBUG: time.sleep(random.uniform(60, 120))
             answerElementList, driver = get_html(url)
             print("[NORMAL] 开始抓取该问题的回答...")
             answerData, question_title = get_answers(answerElementList, url)
             print(f"[NORMAL] 问题：【{question_title}】 的回答全部抓取完成...")
-            time.sleep(random.uniform(1, 3))
+            if not DEBUG: time.sleep(random.uniform(1, 3))
             question_title = re.sub(r'[\W]', '', question_title)
             filename = str(f"result-{datetime.datetime.now().strftime('%Y-%m-%d')}-{question_title}")
             # answerData.to_csv(f'{config.results_path}/{filename}.csv', encoding='utf-8', index=False)
@@ -175,7 +177,7 @@ if __name__ == '__main__':
             # print(e)
             # print(f"[ERROR] 抓取失败...")
         except Exception as e:
-            time.sleep(random.uniform(300, 400))
+            if not DEBUG: time.sleep(random.uniform(300, 400))
             print(e)
             print(f"[ERROR] 抓取失败...")
 
