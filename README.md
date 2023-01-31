@@ -33,11 +33,13 @@ Python 3.7+
 ```
 pip install -r requirements.txt
 ```
+其中mac版本驱动适用于109版本chrome，其他版本请自行下载对应chrome
+
 
 ## 使用方法
 - 运行<u>scanner.py</u>获取有效的问题id网址，具体的问题以及回答数方便过滤，写入文件
-- 运行<u>filter_links.py</u>按照一定规律筛选问题，并写入文件
-- 下载对应浏览器的驱动并置于[Driver](./Driver)文件夹==> 将需要爬取的问题链接置于<u>config.py</u>中 ==> 运行<u>ZhihuSpider.py</u>
+- 运行<u>filter_links.py</u>按照一定规律筛选问题，并写入文件zhihu_valid_links.txt
+- 下载对应浏览器的驱动并置于[Driver](./Driver)文件夹==>  运行<u>ZhihuSpider.py</u>，结果写入zhihu_result.csv
 
 ## 抓取字段
 
